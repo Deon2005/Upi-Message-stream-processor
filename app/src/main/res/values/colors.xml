@@ -2,6 +2,9 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="background_colour">#FFFFFF</color>
-
+    <color name="circletextcolor">#FFFFFFFF</color>
+    <color name="background_colour">#F8F9FF</color>
+    <color name="blockcolor">#E9E9F2</color>
+    <color name="bgcolor">#EDEDF2</color>
+    <color name="blocktitle">#1A1C1E</color>
 </resources>

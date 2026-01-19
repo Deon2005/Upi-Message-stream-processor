@@ -1,23 +1,26 @@
 package com.example.miniproject
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import com.google.ai.client.generativeai.GenerativeModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.delay
 
-class GeminiHelper {
+// FIX IS HERE: "private val" makes 'context' usable throughout the class
+class GeminiHelper(private val context: Context) {
 
-    // CORRECT MODEL NAME: "gemini-1.5-flash" (2.5 does not exist yet)
     private val generativeModel = GenerativeModel(
         modelName = "gemini-2.5-flash",
-        apiKey = "AIzaSyCaB3yEpPfo1b8gqnt1iO_OvuOghBMKW2o"
+        apiKey = "AIzaSyD0Ivl727wV9m2nJ9c9PnElZvhN2T6xiow"
     )
 
     suspend fun generateRegexFromSms(sms: String): String? {
         return withContext(Dispatchers.IO) {
             val prompt = """
                 I need a Java/Kotlin Regex pattern to parse this SMS:
-                "$sms"
+                "${'$'}sms"
                
                 REQUIREMENTS:
                 1. Capture the Account Number in GROUP 1.
@@ -29,29 +32,46 @@ class GeminiHelper {
                 - Do NOT use named groups like (?<name>...). Use standard capturing groups (...).
                 - Ignore currency symbols (Rs, INR).
                 - Return ONLY the raw regex string. No code blocks. No explanations.
-                
-                Target Regex Structure Example:
-                Acct\s+([A-Za-z0-9]+).*?(debited|credited).*?([\d,]+\.?\d*).*?(\d{2}-[A-Za-z]{3})
             """.trimIndent()
 
-            try {
-                val response = generativeModel.generateContent(prompt)
-                var result = response.text ?: ""
+            var attempts = 0
+            while (attempts < 3) {
+                try {
+                    val response = generativeModel.generateContent(prompt)
+                    var result = response.text ?: ""
 
-                // Cleanup junk
-                result = result.replace("```regex", "")
-                    .replace("```kotlin", "")
-                    .replace("```", "")
-                    .trim()
+                    // Cleanup
+                    result = result.replace("```regex", "")
+                        .replace("```kotlin", "")
+                        .replace("```", "")
+                        .trim()
 
-                Log.d("GEMINI_TEST", "INPUT: $sms")
-                Log.d("GEMINI_TEST", "REGEX: $result")
+                    return@withContext result
 
-                return@withContext result
-            } catch (e: Exception) {
-                Log.e("GEMINI_TEST", "API Error: ${e.message}")
-                return@withContext null
+                } catch (e: Exception) {
+                    val errorMsg = e.message ?: ""
+
+                    if (errorMsg.contains("overloaded") || e.javaClass.name.contains("MissingFieldException")) {
+                        Log.w("GEMINI_TEST", "Server busy (Attempt ${attempts + 1}/3). Retrying...")
+                        attempts++
+                        delay(5000)
+                    } else {
+                        Log.e("GEMINI_TEST", "Fatal API Error: $errorMsg")
+
+                        // SHOW ERROR TOAST ON MAIN THREAD
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(context, "API Error: Check Logcat", Toast.LENGTH_SHORT).show()
+                        }
+                        return@withContext null
+                    }
+                }
             }
+
+            // SHOW TIMEOUT TOAST ON MAIN THREAD
+            withContext(Dispatchers.Main) {
+                Toast.makeText(context, "Server Busy - Try Again Later", Toast.LENGTH_LONG).show()
+            }
+            return@withContext null
         }
     }
 }
