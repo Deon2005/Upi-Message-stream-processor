@@ -12,7 +12,7 @@ import kotlinx.coroutines.delay
 class GeminiHelper(private val context: Context) {
 
     private val generativeModel = GenerativeModel(
-        modelName = "gemini-2.5-flash",
+        modelName = "gemini-2.5-flash-lite",
         apiKey = "AIzaSyD0Ivl727wV9m2nJ9c9PnElZvhN2T6xiow"
     )
 

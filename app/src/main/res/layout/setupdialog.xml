@@ -6,7 +6,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="550dp"
+    android:layout_height="wrap_content"
     android:layout_marginHorizontal="3dp"
     android:padding="12dp"
     android:background="@drawable/rect1"
@@ -41,7 +41,7 @@
     <LinearLayout
         android:id="@+id/contentLayout"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:background="@drawable/rect2"
         android:orientation="vertical"
@@ -103,39 +103,9 @@
                 android:hint="Enter Sample SMS here..."/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="SMS Format"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:textSize="20sp"/>
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="125dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:boxBackgroundColor="@android:color/white"
-            app:boxCornerRadiusTopStart="10dp"
-            app:boxCornerRadiusTopEnd="10dp"
-            app:boxCornerRadiusBottomStart="10dp"
-            app:boxCornerRadiusBottomEnd="10dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:id="@+id/resultTextview"
-                android:layout_height="105dp"
-                android:inputType="textCapCharacters"
-                android:textColor="@color/black"
-                android:hint="Regex form will be displayed here" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatButton
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/submitbtn"
                 android:text="SUBMIT"
@@ -143,17 +113,7 @@
                 android:background="@color/blockcolor"
                 android:textColor="@color/black"
                 />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@color/blockcolor"
-                android:id="@+id/savebtn"
-                android:text="SAVE"
-                android:textColor="@color/black"/>
         </LinearLayout>
-
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 </RelativeLayout>

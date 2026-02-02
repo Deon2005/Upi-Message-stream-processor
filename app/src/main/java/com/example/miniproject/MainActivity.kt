@@ -1,10 +1,14 @@
 package com.example.miniproject
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 
@@ -14,11 +18,32 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+        requestPermission()
+        checkifnoregex()
 
-        // Open the dialog immediately
-        callSetupDialog()
+    }
+    fun requestPermission()
+    {
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS)!= PackageManager.PERMISSION_GRANTED)
+        {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECEIVE_SMS),1)
+        }
+    }
 
-        // Listen for the result from the SetupDialogFragment
+    private fun checkifnoregex()
+    {
+        lifecycleScope.launch {
+            val database=AppDatabase.getDatabase(this@MainActivity)
+            val count=database.regexDao().getCount()
+            if(count==0)
+            {
+                callSetupDialog()
+                receiveRegex()
+            }
+        }
+    }
+
+    fun receiveRegex() {
         supportFragmentManager.setFragmentResultListener("requestKey", this) { _, bundle ->
             // We only need the sample SMS to generate the pattern
             val sampleSMS = bundle.getString("bundle_sample")
@@ -53,7 +78,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
     private fun callSetupDialog() {
         val dialog = SetupDialogFragment()
         dialog.show(supportFragmentManager, "setupDialog")

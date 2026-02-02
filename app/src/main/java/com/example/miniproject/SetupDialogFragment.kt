@@ -1,16 +1,15 @@
 package com.example.miniproject
 
 import android.os.Bundle
-import android.provider.Settings.Secure.putString
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageButton
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 class SetupDialogFragment : DialogFragment() {
     override fun onCreateView(
@@ -28,7 +27,6 @@ class SetupDialogFragment : DialogFragment() {
 
         val closebtn=view.findViewById<ImageButton>(R.id.closeButton)
         val submitbtn=view.findViewById<androidx.appcompat.widget.AppCompatButton>(R.id.submitbtn)
-        val savebtn=view.findViewById<androidx.appcompat.widget.AppCompatButton>(R.id.savebtn)
         val senderid=view.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.senderid)
         val samplesms=view.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.samplesms)
 
@@ -51,13 +49,22 @@ class SetupDialogFragment : DialogFragment() {
                 Toast.makeText(requireContext(), "Please fill all the fields", Toast.LENGTH_SHORT).show()
             }
         }
-        savebtn.setOnClickListener {
-            dismiss()
-        }
+
     }
     fun onRegexGenerated(regex: String) {
-        val regexTextView = view?.findViewById<TextView>(R.id.resultTextview)
-        regexTextView?.setText(regex)
+        val senderid=view?.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.senderid)
+        lifecycleScope.launch()
+        {
+            val database=AppDatabase.getDatabase(requireContext())
+            val newRow = Regexdatabase(
+                tid=0,
+                regex=regex,
+                name=senderid?.text.toString()
+            )
+            database.regexDao().insertRegex(newRow)
+            Toast.makeText(context,"Saveed successfully!",Toast.LENGTH_LONG).show()
+            dismiss()
+        }
     }
     override fun onStart() {
         super.onStart()
