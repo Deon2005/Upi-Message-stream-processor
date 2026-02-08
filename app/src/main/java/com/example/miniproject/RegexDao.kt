@@ -13,4 +13,7 @@ interface RegexDao
     suspend fun getAllRegex(): List<Regexdatabase>
     @Query("SELECT COUNT(*) FROM regexdatabase")
     suspend fun getCount(): Int
+
+    @Query("SELECT * FROM regexdatabase WHERE :sender LIKE '%' || name || '%' LIMIT 1")
+    suspend fun getRegexBySender(sender: String): Regexdatabase?
 }

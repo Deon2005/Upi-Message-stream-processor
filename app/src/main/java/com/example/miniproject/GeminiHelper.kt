@@ -19,20 +19,25 @@ class GeminiHelper(private val context: Context) {
     suspend fun generateRegexFromSms(sms: String): String? {
         return withContext(Dispatchers.IO) {
             val prompt = """
-                I need a Java/Kotlin Regex pattern to parse this SMS:
-                "${'$'}sms"
-               
-                REQUIREMENTS:
-                1. Capture the Account Number in GROUP 1.
-                2. Capture the Transaction Type (debited/credited) in GROUP 2.
-                3. Capture the Amount (digits/decimals only) in GROUP 3.
-                4. Capture the Date in GROUP 4.
-                
-                CRITICAL RULES:
-                - Do NOT use named groups like (?<name>...). Use standard capturing groups (...).
-                - Ignore currency symbols (Rs, INR).
-                - Return ONLY the raw regex string. No code blocks. No explanations.
-            """.trimIndent()
+Act as an expert Regex Generator. I need a Kotlin/Java Regex pattern to parse this specific SMS:
+
+$sms
+
+STRICT OUTPUT RULES:
+1. Return ONLY the raw regex string. Do not use Markdown, code blocks (```), or explanations.
+2. The regex must have EXACTLY 5 Capturing Groups in the strict order listed below.
+
+CAPTURING GROUPS (Strict Order):
+1. **Account Number**: Digits representing the account (Context clues: 'A/c', 'Account', 'Ending', 'X', or similar).
+2. **Transaction Type**: The specific word indicating direction found in the text (e.g., 'credited', 'debited', 'sent', 'received', 'trf to').
+3. **Amount**: The numeric value. IMPORTANT: Handle optional decimals `(?:\.\d+)?`. Do NOT capture currency symbols (like 'INR', 'Rs') unless they are part of the number. Look for the number near the transaction type.
+4. **Date**: The date string found in the message. Match the EXACT format shown in the SMS (e.g., DD-MM-YYYY, DDMonYY, etc.).
+5. **Entity/UPI ID**: The other party involved. (Logic: If debited, capture who it was paid 'to'. If credited, capture who it is 'from'. Look for keywords like 'to', 'from', 'VPA', or 'at').
+
+REGEX LOGIC:
+- **Be Adaptive**: Do not assume specific keywords (like "INR") exist unless they are actually in the provided SMS. Use the specific words found in the text to anchor your regex.
+- **Flexibility**: Use `.*?` to skip unrelated text between groups. Use `\s+` to handle variable spaces.
+""".trimIndent()
 
             var attempts = 0
             while (attempts < 3) {
