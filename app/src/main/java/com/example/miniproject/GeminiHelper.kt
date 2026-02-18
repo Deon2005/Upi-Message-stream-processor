@@ -5,78 +5,137 @@ import android.util.Log
 import android.widget.Toast
 import com.google.ai.client.generativeai.GenerativeModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
-// FIX IS HERE: "private val" makes 'context' usable throughout the class
 class GeminiHelper(private val context: Context) {
 
     private val generativeModel = GenerativeModel(
-        modelName = "gemini-2.5-flash-lite",
-        apiKey = "AIzaSyD0Ivl727wV9m2nJ9c9PnElZvhN2T6xiow"
+        modelName = "gemini-2.5-flash",
+        apiKey = "AIzaSyC2LGIq-N3U-fb8aUXHW_y3BCPUP2xYZW4"
     )
 
     suspend fun generateRegexFromSms(sms: String): String? {
         return withContext(Dispatchers.IO) {
+
+            // Normalize SMS slightly (do NOT change content)
+            val cleanSms = sms.trim()
+
             val prompt = """
-Act as an expert Regex Generator. I need a Kotlin/Java Regex pattern to parse this specific SMS:
+You are an expert Regex Engineer.
 
-$sms
+SMS TO MATCH EXACTLY (DO NOT MODIFY, DO NOT GENERALIZE):
+<<<
+$cleanSms
+>>>
 
-STRICT OUTPUT RULES:
-1. Return ONLY the raw regex string. Do not use Markdown, code blocks (```), or explanations.
-2. The regex must have EXACTLY 5 Capturing Groups in the strict order listed below.
+Generate ONE Java/Kotlin–compatible regex to parse the above SMS.
 
-CAPTURING GROUPS (Strict Order):
-1. **Account Number**: Digits representing the account (Context clues: 'A/c', 'Account', 'Ending', 'X', or similar).
-2. **Transaction Type**: The specific word indicating direction found in the text (e.g., 'credited', 'debited', 'sent', 'received', 'trf to').
-3. **Amount**: The numeric value. IMPORTANT: Handle optional decimals `(?:\.\d+)?`. Do NOT capture currency symbols (like 'INR', 'Rs') unless they are part of the number. Look for the number near the transaction type.
-4. **Date**: The date string found in the message. Match the EXACT format shown in the SMS (e.g., DD-MM-YYYY, DDMonYY, etc.).
-5. **Entity/UPI ID**: The other party involved. (Logic: If debited, capture who it was paid 'to'. If credited, capture who it is 'from'. Look for keywords like 'to', 'from', 'VPA', or 'at').
+STRICT OUTPUT RULES
+- Output ONLY the raw regex string
+- No explanations
+- No comments
+- No markdown
+- Regex must compile in Java/Kotlin
+- Each named capturing group MUST appear exactly once
 
-REGEX LOGIC:
-- **Be Adaptive**: Do not assume specific keywords (like "INR") exist unless they are actually in the provided SMS. Use the specific words found in the text to anchor your regex.
-- **Flexibility**: Use `.*?` to skip unrelated text between groups. Use `\s+` to handle variable spaces.
+REQUIRED NAMED CAPTURING GROUPS
+- (?<account>)
+- (?<type>)
+- (?<amount>)
+- (?<date>) (optional)
+- (?<upi>) (optional)
+
+FIELD RULES
+- account, type, amount are mandatory
+- date and upi are optional and MUST NOT break matching
+
+GLOBAL REGEX RULES
+- Regex MUST start with (?i).*?
+- Use lazy matching (.*?) between fields
+- Enumerate transaction type strictly: credit|credited|debit|debited
+- Anchor amount to Rs or INR
+- NEVER duplicate named groups
+- NEVER use alternation to reorder fields
+
+OVERFITTING RULE
+Matching THIS SMS is more important than generalization.
+Discard any rule that prevents a match.
 """.trimIndent()
 
-            var attempts = 0
-            while (attempts < 3) {
+            var attempt = 0
+            val maxAttempts = 3
+
+            while (attempt < maxAttempts) {
                 try {
                     val response = generativeModel.generateContent(prompt)
-                    var result = response.text ?: ""
+                    var regexText = response.text ?: ""
 
-                    // Cleanup
-                    result = result.replace("```regex", "")
-                        .replace("```kotlin", "")
+                    // Cleanup Gemini formatting
+                    regexText = regexText
+                        .replace("```regex", "")
                         .replace("```", "")
                         .trim()
 
-                    return@withContext result
+                    Log.d("GEMINI_REGEX_RAW", regexText)
+
+                    // ---------- HARD VALIDATION ----------
+                    try {
+                        val regex = Regex(regexText)
+
+                        if (!regex.containsMatchIn(cleanSms)) {
+                            Log.e(
+                                "GEMINI_REGEX_FAIL",
+                                "Regex does NOT match SMS. Retrying...\nRegex: $regexText\nSMS: $cleanSms"
+                            )
+                            attempt++
+                            continue
+                        }
+
+                        // SUCCESS
+                        Log.d("GEMINI_REGEX_OK", "Valid regex generated")
+                        return@withContext regexText
+
+                    } catch (re: Exception) {
+                        Log.e(
+                            "GEMINI_REGEX_SYNTAX",
+                            "Invalid regex syntax. Retrying...\n$regexText"
+                        )
+                        attempt++
+                        continue
+                    }
 
                 } catch (e: Exception) {
-                    val errorMsg = e.message ?: ""
+                    val msg = e.message ?: ""
 
-                    if (errorMsg.contains("overloaded") || e.javaClass.name.contains("MissingFieldException")) {
-                        Log.w("GEMINI_TEST", "Server busy (Attempt ${attempts + 1}/3). Retrying...")
-                        attempts++
-                        delay(5000)
+                    if (msg.contains("overloaded", ignoreCase = true)) {
+                        Log.w("GEMINI_API", "Server overloaded. Retrying...")
+                        attempt++
+                        delay(4000)
                     } else {
-                        Log.e("GEMINI_TEST", "Fatal API Error: $errorMsg")
-
-                        // SHOW ERROR TOAST ON MAIN THREAD
+                        Log.e("GEMINI_API_FATAL", msg)
                         withContext(Dispatchers.Main) {
-                            Toast.makeText(context, "API Error: Check Logcat", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                "Gemini API Error. Check Logcat.",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                         return@withContext null
                     }
                 }
             }
 
-            // SHOW TIMEOUT TOAST ON MAIN THREAD
+            // Final failure
             withContext(Dispatchers.Main) {
-                Toast.makeText(context, "Server Busy - Try Again Later", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    context,
+                    "Failed to generate valid regex",
+                    Toast.LENGTH_LONG
+                ).show()
             }
-            return@withContext null
+
+            null
         }
     }
 }

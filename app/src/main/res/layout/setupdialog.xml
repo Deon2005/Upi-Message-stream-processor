@@ -110,7 +110,7 @@
                 android:id="@+id/submitbtn"
                 android:text="SUBMIT"
                 android:layout_marginRight="10dp"
-                android:background="@color/blockcolor"
+                android:background="@drawable/rect1"
                 android:textColor="@color/black"
                 />
         </LinearLayout>

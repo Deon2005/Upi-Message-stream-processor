@@ -1,22 +1,50 @@
 package com.example.miniproject
 
+import android.content.Context
 import android.util.Log
+import java.time.LocalDate
 
-class DataParser
-{
-    fun smsParser( message: String, regex: String): Boolean
-    {
-            val match = Regex(regex).find(message)
+class DataParser {
+
+    suspend fun smsParser(context: Context, message: String, regex: String): Boolean {
+        try {
+            val database = AppDatabase.getDatabase(context)
+
+            val match = Regex(regex, RegexOption.IGNORE_CASE).find(message)
+
             if (match != null) {
-                val accNo = match.groupValues[1]
-                val type = match.groupValues[2]
-                val amount = match.groupValues[3]
-                val date = match.groupValues[4]
-                val upi = match.groupValues[5]
+                val accNoString = match.groups["account"]?.value ?: ""
+                val typeString = match.groups["type"]?.value ?: ""
+                val rawAmount = match.groups["amount"]?.value ?: "0"
+                val upiString = match.groups["upi"]?.value ?: ""
 
-                Log.d("PARSER_SUCCESS", "Paid $amount to $upi on $date (Acc: $accNo, Type: $type)")
+
+                val finalAmount = rawAmount.replace(",", "").toDoubleOrNull() ?: 0.0
+
+                val date = LocalDate.now()
+
+                Log.d(
+                    "PARSER_SUCCESS",
+                    "Paid $finalAmount to $upiString on $date (Acc: $accNoString) $typeString"
+                )
+
+                val newTransaction = Transaction(
+                    id = 0,
+                    amount = finalAmount,
+                    date = date,
+                    type = typeString,
+                    upiID = upiString,
+                    accountNumber = accNoString
+                )
+
+                database.transactionDao().insertTransaction(newTransaction)
+                Log.d("PARSER_SUCCESS", "✅ Saved to database")
                 return true
             }
-            return false
+            Log.e("PARSER_FAIL", "❌ Regex did not match: $message")
+        } catch (e: Exception) {
+            Log.e("PARSER_FAIL", "❌ Error: $e")
+        }
+        return false
     }
 }
