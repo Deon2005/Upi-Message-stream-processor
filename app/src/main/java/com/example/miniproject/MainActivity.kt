@@ -101,27 +101,24 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this@MainActivity, "Asking Gemini for Regex...", Toast.LENGTH_SHORT).show()
 
                     val helper = GeminiHelper(this@MainActivity)
+                    val result=helper.generateRegexFromSms(sampleSMS)
 
-                    // 1. Fetch ONLY the Regex string
-                    val regexPattern = helper.generateRegexFromSms(sampleSMS)
-                    if (regexPattern != null) {
+
+                    if (result != null) {
                         // 2. Just Log and Toast the raw pattern
-                        Log.d("GEMINI_TEST", "✅ FINAL REGEX: $regexPattern")
                         Toast.makeText(this@MainActivity, "Regex Fetched!", Toast.LENGTH_LONG).show()
-                        if(regexPattern!=null)
-                        {
                             if (activedialog!=null&&activedialog.isVisible)
                             {
-                                activedialog.onRegexGenerated(regexPattern)
+                                activedialog.onRegexGenerated(
+                                    regex =  result.pattern,
+                                    type = result.extractedWord
+                                )
                             }
-                        }
-                    } else {
+                    }
+
+                    else {
                         Log.e("GEMINI_TEST", "❌ Failed to generate Regex")
                         Toast.makeText(this@MainActivity, "Failed to get Regex", Toast.LENGTH_SHORT).show()
-                        if(activedialog!=null&&activedialog.isVisible)
-                        {
-                            activedialog.onError()
-                        }
                     }
                 }
             }

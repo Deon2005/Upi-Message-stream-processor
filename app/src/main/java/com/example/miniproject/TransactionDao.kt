@@ -15,10 +15,10 @@ interface TransactionDao
     @Query("SELECT * FROM transactions ORDER BY date DESC")
     fun getAllTransactions(): Flow<List<Transaction>>
 
-    @Query("SELECT TOTAL(amount) FROM transactions WHERE date = :date AND (type LIKE :type1 OR type LIKE :type2)")
-    fun getDailySum(date: LocalDate, type1: String,type2: String): Flow<Double>
+    @Query("SELECT TOTAL(amount) FROM transactions WHERE date = :date AND type=:type")
+    fun getDailySum(date: LocalDate, type:Int): Flow<Double>
 
-    @Query("SELECT TOTAL(amount) FROM transactions WHERE date BETWEEN :startDate AND :endDate AND (type LIKE :type1 OR type LIKE :type2)")
-    fun getMonthlySum(startDate: LocalDate, endDate: LocalDate, type1: String, type2: String): Flow<Double>
+    @Query("SELECT TOTAL(amount) FROM transactions WHERE date BETWEEN :startDate AND :endDate AND type=:type")
+    fun getMonthlySum(startDate: LocalDate, endDate: LocalDate, type: Int): Flow<Double>
 
 }

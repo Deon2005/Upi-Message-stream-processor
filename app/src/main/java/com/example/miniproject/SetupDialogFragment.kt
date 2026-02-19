@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageButton
+import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.DialogFragment
@@ -19,6 +20,8 @@ class SetupDialogFragment : DialogFragment() {
     var submitbtn: AppCompatButton? = null
     var senderid: TextInputEditText? = null
     var samplesms: TextInputEditText? = null
+    var radiogp: RadioGroup?=null
+    var typeValue=-1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,17 +40,21 @@ class SetupDialogFragment : DialogFragment() {
         submitbtn=view.findViewById(R.id.submitbtn)
         senderid=view.findViewById(R.id.senderid)
         samplesms=view.findViewById(R.id.samplesms)
+        radiogp=view.findViewById(R.id.radiogp)
 
         closebtn.setOnClickListener {
             dismiss()
         }
         submitbtn?.setOnClickListener {
-            if(senderid?.text.toString().isNotEmpty() && samplesms?.text.toString().isNotEmpty()) {
+            val selectedoptionId = radiogp?.checkedRadioButtonId?:-1
+            if(senderid?.text.toString().isNotEmpty() && samplesms?.text.toString().isNotEmpty() && selectedoptionId != -1) {
                 var sender= senderid?.text.toString()
                 var sample= samplesms?.text.toString()
+                typeValue=if(selectedoptionId==R.id.radio0) 0 else 1
                 val result = Bundle().apply {
                     putString("bundle_sender", sender)
                     putString("bundle_sample", sample)
+                    putInt("bundle_type", typeValue)
                 }
                 parentFragmentManager.setFragmentResult("requestKey", result)
             } else {
@@ -56,7 +63,7 @@ class SetupDialogFragment : DialogFragment() {
         }
 
     }
-    fun onRegexGenerated(regex: String) {
+    fun onRegexGenerated(regex: String,type : String) {
         val senderid=view?.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.senderid)
         lifecycleScope.launch()
         {
@@ -64,7 +71,9 @@ class SetupDialogFragment : DialogFragment() {
             val newRow = Regexdatabase(
                 tid=0,
                 regex=regex,
-                name=senderid?.text.toString()
+                name=senderid?.text.toString(),
+                typecode=typeValue,
+                type=type
             )
             database.regexDao().insertRegex(newRow)
             Toast.makeText(context,"Saveed successfully!",Toast.LENGTH_LONG).show()

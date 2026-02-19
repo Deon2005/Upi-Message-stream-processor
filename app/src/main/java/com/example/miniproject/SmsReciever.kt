@@ -48,7 +48,7 @@ class SmsReciever : BroadcastReceiver() {
             {
                 val regex= rule.regex
                 Log.d("PARSER_SUCCESS", "Regex: $regex")
-                val success = parser.smsParser( context,message, regex)
+                val success = parser.smsParser( context,message, rule)
                 if (success) {
                     Log.d("PARSER_SUCCESS", "Success")
                 } else {

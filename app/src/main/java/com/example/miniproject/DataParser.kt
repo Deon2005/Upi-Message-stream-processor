@@ -6,18 +6,31 @@ import java.time.LocalDate
 
 class DataParser {
 
-    suspend fun smsParser(context: Context, message: String, regex: String): Boolean {
+    suspend fun smsParser(context: Context, message: String, rule: Regexdatabase): Boolean {
         try {
             val database = AppDatabase.getDatabase(context)
 
-            val match = Regex(regex, RegexOption.IGNORE_CASE).find(message)
+            val match = Regex(rule.regex, RegexOption.IGNORE_CASE).find(message)
 
             if (match != null) {
                 val accNoString = match.groups["account"]?.value ?: ""
                 val typeString = match.groups["type"]?.value ?: ""
                 val rawAmount = match.groups["amount"]?.value ?: "0"
                 val upiString = match.groups["upi"]?.value ?: ""
-
+                val regexcode=rule.typecode
+                var typecode=-1
+                if(typeString.lowercase().trim()== rule.type.lowercase().trim())
+                {
+                    typecode=regexcode
+                }
+                else if(regexcode==0)
+                {
+                    typecode=1
+                }
+                else
+                {
+                    typecode=0
+                }
 
                 val finalAmount = rawAmount.replace(",", "").toDoubleOrNull() ?: 0.0
 
@@ -32,7 +45,7 @@ class DataParser {
                     id = 0,
                     amount = finalAmount,
                     date = date,
-                    type = typeString,
+                    type = typecode,
                     upiID = upiString,
                     accountNumber = accNoString
                 )

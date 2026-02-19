@@ -85,6 +85,22 @@
             android:textStyle="bold"
             android:textColor="@color/black"
             android:textSize="20sp"/>
+        <RadioGroup
+            android:id="@+id/radiogp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/radio0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Debit "/>
+            <RadioButton
+                android:id="@+id/radio1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Credit "/>
+        </RadioGroup>
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="120dp"

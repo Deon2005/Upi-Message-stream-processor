@@ -16,8 +16,8 @@ class MainViewModel (application: Application): AndroidViewModel(application)
     private val startOfMonth = today.withDayOfMonth(1)
     private val endOfMonth = today.withDayOfMonth(today.lengthOfMonth())
 
-    val todayDebit: StateFlow<Double> = dao.getDailySum(today,"d%","D%").stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000),0.0)
-    val monthDebit: StateFlow<Double> = dao.getMonthlySum(startOfMonth, endOfMonth, "d%","D%").stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
-    val todayCredit: StateFlow<Double> = dao.getDailySum(today, "c%","C%").stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
-    val monthCredit: StateFlow<Double> = dao.getMonthlySum(startOfMonth, endOfMonth, "c%","C%").stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
+    val todayDebit: StateFlow<Double> = dao.getDailySum(today,0).stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000),0.0)
+    val monthDebit: StateFlow<Double> = dao.getMonthlySum(startOfMonth, endOfMonth, 0).stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
+    val todayCredit: StateFlow<Double> = dao.getDailySum(today, 1).stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
+    val monthCredit: StateFlow<Double> = dao.getMonthlySum(startOfMonth, endOfMonth, 1).stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
 }

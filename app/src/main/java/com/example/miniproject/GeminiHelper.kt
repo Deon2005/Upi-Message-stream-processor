@@ -8,6 +8,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
+data class GeminiResult(val pattern: String, val extractedWord: String)
+
 class GeminiHelper(private val context: Context) {
 
     private val generativeModel = GenerativeModel(
@@ -15,7 +17,7 @@ class GeminiHelper(private val context: Context) {
         apiKey = "AIzaSyC2LGIq-N3U-fb8aUXHW_y3BCPUP2xYZW4"
     )
 
-    suspend fun generateRegexFromSms(sms: String): String? {
+    suspend fun generateRegexFromSms(sms: String): GeminiResult? {
         return withContext(Dispatchers.IO) {
 
             // Normalize SMS slightly (do NOT change content)
@@ -49,6 +51,7 @@ REQUIRED NAMED CAPTURING GROUPS
 FIELD RULES
 - account, type, amount are mandatory
 - date and upi are optional and MUST NOT break matching
+- IMPORTANT TYPE RULE: Do NOT hardcode specific transaction words. The (?<type>) group must dynamically capture the single alphabetical word in that position (e.g., using [a-zA-Z]+ or \w+) representing the action (like sent, spent, credited, received).
 
 GLOBAL REGEX RULES
 - Regex MUST start with (?i).*?
@@ -82,8 +85,8 @@ Discard any rule that prevents a match.
                     // ---------- HARD VALIDATION ----------
                     try {
                         val regex = Regex(regexText)
-
-                        if (!regex.containsMatchIn(cleanSms)) {
+                        val match=regex.find(cleanSms)
+                        if (match == null) {
                             Log.e(
                                 "GEMINI_REGEX_FAIL",
                                 "Regex does NOT match SMS. Retrying...\nRegex: $regexText\nSMS: $cleanSms"
@@ -93,8 +96,9 @@ Discard any rule that prevents a match.
                         }
 
                         // SUCCESS
+                        val extractedWord=match.groups["type"]?.value ?.lowercase()?.trim() ?: ""
                         Log.d("GEMINI_REGEX_OK", "Valid regex generated")
-                        return@withContext regexText
+                        return@withContext GeminiResult(regexText,extractedWord)
 
                     } catch (re: Exception) {
                         Log.e(
