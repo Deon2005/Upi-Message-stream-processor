@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -12,6 +13,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -27,47 +32,105 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun showactivitymain()
-    {
+    fun showactivitymain() {
         setContentView(R.layout.activity_main)
-        val expensetoday=findViewById<TextView>(R.id.todayexpense)
-        val expensemonth=findViewById<TextView>(R.id.monthexpense)
-        val debittoday=findViewById<TextView>(R.id.todaydebit)
-        val debitmonth=findViewById<TextView>(R.id.monthdebit)
-        val credittoday=findViewById<TextView>(R.id.todaycredit)
-        val creditmonth=findViewById<TextView>(R.id.monthcredit)
+        if (supportFragmentManager.findFragmentById(R.id.bottom_nav_container) == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.bottom_nav_container, NavBarFragment())
+                .commit()
+        }
+        val expensetoday = findViewById<TextView>(R.id.todayexpense)
+        val expensemonth = findViewById<TextView>(R.id.monthexpense)
+        val debittoday = findViewById<TextView>(R.id.todaydebit)
+        val debitmonth = findViewById<TextView>(R.id.monthdebit)
+        val credittoday = findViewById<TextView>(R.id.todaycredit)
+        val creditmonth = findViewById<TextView>(R.id.monthcredit)
         lifecycleScope.launch {
-            viewModel.todayDebit.collect{amount->
-                debittoday.text=amount.toString()
+            viewModel.todayDebit.collect { amount ->
+                debittoday.text = amount.toString()
             }
         }
         lifecycleScope.launch {
-            viewModel.monthDebit.collect{amount->
-                debitmonth.text=amount.toString()
+            viewModel.monthDebit.collect { amount ->
+                debitmonth.text = amount.toString()
             }
         }
 
         lifecycleScope.launch {
-            viewModel.todayCredit.collect{amount->
-                credittoday.text=amount.toString()
+            viewModel.todayCredit.collect { amount ->
+                credittoday.text = amount.toString()
             }
         }
         lifecycleScope.launch {
-            viewModel.monthCredit.collect{amount->
-                creditmonth.text=amount.toString()
+            viewModel.monthCredit.collect { amount ->
+                creditmonth.text = amount.toString()
             }
         }
         lifecycleScope.launch {
-            viewModel.todayDebit.collect{amount->
-                expensetoday.text=amount.toString()
+            viewModel.todayDebit.collect { amount ->
+                expensetoday.text = amount.toString()
             }
         }
         lifecycleScope.launch {
-            viewModel.monthDebit.collect{amount->
-                expensemonth.text=amount.toString()
+            viewModel.monthDebit.collect { amount ->
+                expensemonth.text = amount.toString()
+            }
+        }
+        lifecycleScope.launch {
+            viewModel.chartdata.collect { dataPoints ->
+                    updateChart(dataPoints)
+            }
+        }
+        var chartleft=findViewById<ImageButton>(R.id.chartleft)
+        var chartright=findViewById<ImageButton>(R.id.chartright)
+        val chartOption=findViewById<TextView>(R.id.chartoption)
+
+        chartleft.setOnClickListener()
+        {
+            chartOption.setText(viewModel.previousChart())
+        }
+        chartright.setOnClickListener()
+        {
+            chartOption.setText(viewModel.nextChart())
+        }
+        lifecycleScope.launch {
+            viewModel.currentOptionIndex.collect { option ->
+                chartOption.text = viewModel.options[option]
             }
         }
     }
+
+    fun updateChart(dataPoints: List<Pair<Float, Float>>) {
+        val lineChart = findViewById<LineChart>(R.id.lineChart)
+        if (dataPoints.isEmpty()) {
+            lineChart.clear()
+            return
+        }
+        val entries=ArrayList<Entry>()
+        for(point in dataPoints)
+        {
+            entries.add(Entry(point.first, point.second))
+        }
+
+        val dataSet = LineDataSet(entries, "Expense")
+        dataSet.color = ContextCompat.getColor(this, R.color.black)
+        dataSet.valueTextColor = ContextCompat.getColor(this, R.color.black)
+        dataSet.setDrawFilled(true)
+        dataSet.lineWidth=3f
+        dataSet.mode=LineDataSet.Mode.CUBIC_BEZIER
+
+        val lineData = LineData(dataSet)
+        lineChart.data=lineData
+        lineChart.invalidate()
+        lineChart.animateX(1000)
+        lineChart.xAxis.setDrawGridLines(false)
+
+        val yAxis = lineChart.axisLeft
+        yAxis.axisMinimum = 0f
+        yAxis.setDrawGridLines(false)
+
+    }
+
     fun requestPermission()
     {
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS)!= PackageManager.PERMISSION_GRANTED)
