@@ -18,6 +18,7 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import kotlinx.coroutines.launch
+import kotlin.jvm.java
 
 class MainActivity : AppCompatActivity() {
 
@@ -98,7 +99,33 @@ class MainActivity : AppCompatActivity() {
                 chartOption.text = viewModel.options[option]
             }
         }
+        expensetoday.setOnClickListener {
+            showlog("expensetoday")
+        }
+        expensemonth.setOnClickListener {
+            showlog("expensemonth")
+        }
+        debittoday.setOnClickListener {
+            showlog("debittoday")
+        }
+        debitmonth.setOnClickListener {
+            showlog("debitmonth")
+        }
+        credittoday.setOnClickListener {
+            showlog("credittoday")
+        }
+        creditmonth.setOnClickListener {
+            showlog("creditmonth")
+        }
     }
+
+    fun showlog(type:String)
+    {
+        val intent=android.content.Intent(this,LogActivity::class.java)
+        intent.putExtra("type",type)
+        startActivity(intent)
+    }
+
 
     fun updateChart(dataPoints: List<Pair<Float, Float>>) {
         val lineChart = findViewById<LineChart>(R.id.lineChart)
@@ -113,8 +140,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         val dataSet = LineDataSet(entries, "Expense")
-        dataSet.color = ContextCompat.getColor(this, R.color.black)
-        dataSet.valueTextColor = ContextCompat.getColor(this, R.color.black)
+        dataSet.color = ContextCompat.getColor(this, R.color.white)
+        dataSet.valueTextColor = ContextCompat.getColor(this, R.color.white)
         dataSet.setDrawFilled(true)
         dataSet.lineWidth=3f
         dataSet.mode=LineDataSet.Mode.CUBIC_BEZIER
@@ -128,6 +155,8 @@ class MainActivity : AppCompatActivity() {
         val yAxis = lineChart.axisLeft
         yAxis.axisMinimum = 0f
         yAxis.setDrawGridLines(false)
+
+
 
     }
 

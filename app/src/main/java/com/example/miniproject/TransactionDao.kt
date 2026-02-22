@@ -3,6 +3,7 @@ package com.example.miniproject
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
@@ -28,5 +29,16 @@ interface TransactionDao
     @Query("SELECT date, SUM(amount) as total FROM transactions WHERE type = 0 AND date BETWEEN :startDate AND :endDate GROUP BY date ORDER BY date ASC")
     fun getDailyTotals(startDate: LocalDate, endDate: LocalDate): Flow<List<DailyTotal>>
 
+    @Query("SELECT * FROM transactions WHERE date = :date and type = :type")
+    fun getTransactionsByDateandtype(date: LocalDate, type: Int): Flow<List<Transaction>>
+
+    @Query("DELETE FROM transactions WHERE id = :id")
+    suspend fun deleteTransaction(id: Long)
+
+    @Update
+    suspend fun update(transaction: Transaction)
+
+    @Query("SELECT * FROM transactions WHERE date BETWEEN :startDate AND :endDate AND type=:type")
+    fun getMonthlydata(startDate: LocalDate, endDate: LocalDate, type: Int): Flow<List<Transaction>>
 }
 

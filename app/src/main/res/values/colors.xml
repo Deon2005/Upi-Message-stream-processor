@@ -3,8 +3,10 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="circletextcolor">#FFFFFFFF</color>
-    <color name="background_colour">#F8F9FF</color>
-    <color name="blockcolor">#E9E9F2</color>
-    <color name="bgcolor">#EDEDF2</color>
-    <color name="blocktitle">#1A1C1E</color>
+    <color name="background_colour">#121212</color>
+    <color name="blockcolor">#1E1E1E</color>
+    <color name="bgcolor">#121212</color>
+    <color name="blocktitle">#E3E3E3</color>
+    <color name="transactioncolor">#02ED02</color>
+
 </resources>

@@ -51,7 +51,7 @@ REQUIRED NAMED CAPTURING GROUPS
 FIELD RULES
 - account, type, amount are mandatory
 - date and upi are optional and MUST NOT break matching
-- IMPORTANT TYPE RULE: Do NOT hardcode specific transaction words. The (?<type>) group must dynamically capture the single alphabetical word in that position (e.g., using [a-zA-Z]+ or \w+) representing the action (like sent, spent, credited, received).
+- The (?<upi>) group MUST capture the transaction counterparty (name, UPI ID, or Ref no). Because prepositions change based on the transaction type, you MUST use an alternation for the preceding word (e.g., use "(?:to|from|by|at)\s+(?<upi>[^.]+)" instead of hardcoding a single word like "from")
 
 GLOBAL REGEX RULES
 - Regex MUST start with (?i).*?
