@@ -52,5 +52,23 @@ interface TransactionDao
 
     @Query("SELECT * FROM transactions WHERE date BETWEEN :startDate AND :endDate AND type=:type AND mode=:mode")
     fun getSMSMonthlydata(startDate: LocalDate, endDate: LocalDate, type: Int,mode: Int): Flow<List<Transaction>>
+
+    // Inside TransactionDao.kt
+
+    // 1. Query for everything
+    @Query("SELECT * FROM transactions WHERE date >= :startDate AND date <= :endDate ORDER BY date DESC")
+    fun getAllHistory(startDate: LocalDate, endDate: LocalDate): Flow<List<Transaction>>
+
+    // 2. Query filtered ONLY by Type
+    @Query("SELECT * FROM transactions WHERE type = :type AND date >= :startDate AND date <= :endDate ORDER BY date DESC")
+    fun getHistoryByType(type: Int, startDate: LocalDate, endDate: LocalDate): Flow<List<Transaction>>
+
+    // 3. Query filtered ONLY by Mode
+    @Query("SELECT * FROM transactions WHERE mode = :mode AND date >= :startDate AND date <= :endDate ORDER BY date DESC")
+    fun getHistoryByMode(mode: Int, startDate: LocalDate, endDate: LocalDate): Flow<List<Transaction>>
+
+    // 4. Query filtered by BOTH (Your original logic)
+    @Query("SELECT * FROM transactions WHERE type = :type AND mode = :mode AND date >= :startDate AND date <= :endDate ORDER BY date DESC")
+    fun getHistoryFullFilter(type: Int, mode: Int, startDate: LocalDate, endDate: LocalDate): Flow<List<Transaction>>
 }
 

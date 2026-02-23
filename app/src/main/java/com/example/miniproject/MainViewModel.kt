@@ -5,6 +5,7 @@ import android.widget.ImageButton
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -106,6 +107,49 @@ class MainViewModel (application: Application): AndroidViewModel(application)
             }
 
             chart_Data.value=newChartData
-        }}
+        }
+
+        }
+    }
+    fun getHistory(
+        typeString: String,
+        modeString: String,
+        dateMode: String,
+        startMs: Long,
+        endMs: Long
+    ): Flow<List<Transaction>> {
+
+        val typeInt = when (typeString) {
+            "Debit" -> 0
+            "Credit" -> 1
+            else -> -1
+        }
+
+        val modeInt = when (modeString) {
+            "Online" -> 0
+            "Cash" -> 1
+            else -> -1
+        }
+
+        val startDate = if (dateMode == "All") LocalDate.of(2000, 1, 1) else convertToLocalDate(startMs)
+        val endDate = if (dateMode == "All") LocalDate.of(2100, 12, 31) else convertToLocalDate(endMs)
+
+        // BRANCHING LOGIC: Pick the cleanest query
+        return when {
+            typeInt == -1 && modeInt == -1 -> dao.getAllHistory(startDate, endDate)
+            typeInt != -1 && modeInt == -1 -> dao.getHistoryByType(typeInt, startDate, endDate)
+            typeInt == -1 && modeInt != -1 -> dao.getHistoryByMode(modeInt, startDate, endDate)
+            else -> dao.getHistoryFullFilter(typeInt, modeInt, startDate, endDate)
+        }
+    }
+    private fun convertToLocalDate(timestamp: Long): LocalDate {
+        return java.time.Instant.ofEpochMilli(timestamp)
+            .atZone(java.time.ZoneId.systemDefault())
+            .toLocalDate()
+    }
+    fun deleteTransaction(transaction: Transaction) {
+        viewModelScope.launch {
+            dao.deleteTransaction(transaction.id) // Ensure your DAO has a @Delete function
+        }
     }
 }

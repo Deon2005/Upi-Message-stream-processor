@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#0D1117"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="80dp"
+            android:background="#0D1117"
+            app:elevation="0dp">
+
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_scrollFlags="scroll|snap|exitUntilCollapsed">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/filterCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginBottom="16dp"
+                        app:cardBackgroundColor="#161B22"
+                        app:cardCornerRadius="16dp"
+                        app:strokeColor="#30363D"
+                        app:strokeWidth="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:animateLayoutChanges="true"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="12dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="60dp"
+                                    android:layout_height="wrap_content"
+                                    android:text="DATE"
+                                    android:textColor="#8B949E"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold" />
+
+                                <com.google.android.material.button.MaterialButtonToggleGroup
+                                    android:id="@+id/toggleDateMode"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="36dp"
+                                    app:checkedButton="@+id/dateModeAll"
+                                    app:selectionRequired="true"
+                                    app:singleSelection="true">
+
+                                    <com.google.android.material.button.MaterialButton
+                                        android:id="@+id/dateModeAll"
+                                        style="?attr/materialButtonOutlinedStyle"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
+                                        android:text="All"
+                                        android:textColor="#FFFFFF"
+                                        android:textSize="12sp"
+                                        app:strokeColor="#30363D" />
+
+                                    <com.google.android.material.button.MaterialButton
+                                        android:id="@+id/dateModeSpecific"
+                                        style="?attr/materialButtonOutlinedStyle"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
+                                        android:text="Specific"
+                                        android:textColor="#FFFFFF"
+                                        android:textSize="12sp"
+                                        app:strokeColor="#30363D" />
+
+                                    <com.google.android.material.button.MaterialButton
+                                        android:id="@+id/dateModeRange"
+                                        style="?attr/materialButtonOutlinedStyle"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
+                                        android:text="Range"
+                                        android:textColor="#FFFFFF"
+                                        android:textSize="12sp"
+                                        app:strokeColor="#30363D" />
+                                </com.google.android.material.button.MaterialButtonToggleGroup>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/layoutSpecificDate"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="12dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:visibility="gone">
+
+                                <View
+                                    android:layout_width="60dp"
+                                    android:layout_height="1dp" />
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/btnSpecificDate"
+                                    style="?attr/materialButtonOutlinedStyle"
+                                    android:layout_width="0dp"
+                                    android:layout_height="36dp"
+                                    android:layout_weight="1"
+                                    android:text="Select Date"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="12sp"
+                                    app:strokeColor="#30363D" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/layoutDateRange"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="12dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:visibility="gone">
+
+                                <View
+                                    android:layout_width="60dp"
+                                    android:layout_height="1dp" />
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/btnStartDate"
+                                    style="?attr/materialButtonOutlinedStyle"
+                                    android:layout_width="0dp"
+                                    android:layout_height="36dp"
+                                    android:layout_weight="1"
+                                    android:text="Start Date"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="12sp"
+                                    app:strokeColor="#30363D" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginHorizontal="8dp"
+                                    android:text="-"
+                                    android:textColor="#8B949E"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/btnEndDate"
+                                    style="?attr/materialButtonOutlinedStyle"
+                                    android:layout_width="0dp"
+                                    android:layout_height="36dp"
+                                    android:layout_weight="1"
+                                    android:text="End Date"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="12sp"
+                                    app:strokeColor="#30363D" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="12dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="60dp"
+                                    android:layout_height="wrap_content"
+                                    android:text="TYPE"
+                                    android:textColor="#8B949E"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold" />
+
+                                <com.google.android.material.button.MaterialButtonToggleGroup
+                                    android:id="@+id/toggleType"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="36dp"
+                                    app:checkedButton="@+id/typeAll"
+                                    app:selectionRequired="true"
+                                    app:singleSelection="true">
+
+                                    <com.google.android.material.button.MaterialButton
+                                        android:id="@+id/typeAll"
+                                        style="?attr/materialButtonOutlinedStyle"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
+                                        android:text="All"
+                                        android:textColor="#FFFFFF"
+                                        android:textSize="12sp"
+                                        app:strokeColor="#30363D" />
+
+                                    <com.google.android.material.button.MaterialButton
+                                        android:id="@+id/typeDebit"
+                                        style="?attr/materialButtonOutlinedStyle"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
+                                        android:text="Debit"
+                                        android:textColor="#FFFFFF"
+                                        android:textSize="12sp"
+                                        app:strokeColor="#30363D" />
+
+                                    <com.google.android.material.button.MaterialButton
+                                        android:id="@+id/typeCredit"
+                                        style="?attr/materialButtonOutlinedStyle"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
+                                        android:text="Credit"
+                                        android:textColor="#FFFFFF"
+                                        android:textSize="12sp"
+                                        app:strokeColor="#30363D" />
+                                </com.google.android.material.button.MaterialButtonToggleGroup>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="60dp"
+                                    android:layout_height="wrap_content"
+                                    android:text="METHOD"
+                                    android:textColor="#8B949E"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold" />
+
+                                <com.google.android.material.button.MaterialButtonToggleGroup
+                                    android:id="@+id/toggleMethod"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="36dp"
+                                    app:checkedButton="@+id/methodAll"
+                                    app:selectionRequired="true"
+                                    app:singleSelection="true">
+
+                                    <com.google.android.material.button.MaterialButton
+                                        android:id="@+id/methodAll"
+                                        style="?attr/materialButtonOutlinedStyle"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
+                                        android:text="All"
+                                        android:textColor="#FFFFFF"
+                                        android:textSize="12sp"
+                                        app:strokeColor="#30363D" />
+
+                                    <com.google.android.material.button.MaterialButton
+                                        android:id="@+id/methodCash"
+                                        style="?attr/materialButtonOutlinedStyle"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
+                                        android:text="Cash"
+                                        android:textColor="#FFFFFF"
+                                        android:textSize="12sp"
+                                        app:strokeColor="#30363D" />
+
+                                    <com.google.android.material.button.MaterialButton
+                                        android:id="@+id/methodOnline"
+                                        style="?attr/materialButtonOutlinedStyle"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
+                                        android:text="Online"
+                                        android:textColor="#FFFFFF"
+                                        android:textSize="12sp"
+                                        app:strokeColor="#30363D" />
+                                </com.google.android.material.button.MaterialButtonToggleGroup>
+                            </LinearLayout>
+
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewHistory"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="100dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <TextView
+        android:id="@+id/historyTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:letterSpacing="-0.02"
+        android:text="Transaction History"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="15dp"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -29,7 +29,7 @@ class NavBarFragment : Fragment() {
         }
 
         navHistoryBtn.setOnClickListener {
-            //swapScreen(HistoryFragment())
+            swapScreen(HistoryFragment())
         }
 
         navSettingsBtn.setOnClickListener {
