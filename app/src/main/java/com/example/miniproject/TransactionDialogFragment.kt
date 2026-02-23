@@ -42,6 +42,7 @@ class TransactionDialogFragment : DialogFragment() {
         val textDate = view.findViewById<TextView>(R.id.dialog_text_date)
         val btnCancel = view.findViewById<View>(R.id.dialog_btn_cancel)
         val btnSave = view.findViewById<View>(R.id.dialog_btn_save)
+        var mode=0
 
         // --- FIX 1: VISIBLE TOGGLE SELECTION ---
         // Listen for clicks and change the background tint of the selected button
@@ -62,6 +63,7 @@ class TransactionDialogFragment : DialogFragment() {
             if (isEditMode) {
                 title.text = "Edit Transaction"
                 transactionId = it.getLong("id")
+                mode=it.getInt("mode")
 
                 inputAmount.setText(it.getDouble("amount").toString())
                 inputDesc.setText(it.getString("desc"))
@@ -108,7 +110,8 @@ class TransactionDialogFragment : DialogFragment() {
                 type = type,
                 upiID = inputDesc.text.toString(),
                 accountNumber = inputSource.text.toString(),
-                date = selectedDate
+                date = selectedDate,
+                mode =if(isEditMode) mode else 1
             )
 
             val dao = AppDatabase.getDatabase(requireContext()).transactionDao()

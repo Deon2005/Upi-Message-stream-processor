@@ -12,5 +12,6 @@ data class Transaction
         val date: LocalDate,
         val type: Int,
         val upiID: String,
-        val accountNumber: String
+        val accountNumber: String,
+        val mode: Int
     )

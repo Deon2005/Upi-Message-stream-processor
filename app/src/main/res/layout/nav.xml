@@ -11,7 +11,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="28dp"
         android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="#5E5E78"
+        app:backgroundTint="#5151DC"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:tint="@color/circletextcolor" />
@@ -25,7 +25,7 @@
         android:layout_marginBottom="20dp"
         app:cardCornerRadius="32dp"
         app:cardElevation="12dp"
-        app:cardBackgroundColor="#43524C"
+        app:cardBackgroundColor="#2E2C2C"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/fab_add_transaction">

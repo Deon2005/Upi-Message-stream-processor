@@ -94,12 +94,12 @@ class LogActivity: AppCompatActivity() {
                 list_header.setText("Debits Today")
                 detail_total_amount.setTextColor(Color.parseColor("#DA3633"))
                 launch {
-                    dao.getTransactionsByDateandtype(today, 0).collect { fullList ->
+                    dao.getSMSTransactionsByDateandtype(today, 0,0).collect { fullList ->
                         adapter.updateData(fullList)
                     }
                 }
                 launch {
-                    dao.getDailySum(today, 0).collect { amount ->
+                    dao.getSMSDailySum(today, 0,0).collect { amount ->
                         val safeAmount = amount ?: 0.0
                         detail_total_amount.text = "₹"+safeAmount.toString()
                     }
@@ -111,12 +111,12 @@ class LogActivity: AppCompatActivity() {
                 list_header.setText("This Months's Debits")
                 detail_total_amount.setTextColor(Color.parseColor("#DA3633"))
                 launch {
-                    dao.getMonthlydata(startOfMonth, endOfMonth, 0).collect { fullList ->
+                    dao.getSMSMonthlydata(startOfMonth, endOfMonth, 0,0).collect { fullList ->
                         adapter.updateData(fullList)
                     }
                 }
                 launch {
-                    dao.getMonthlySum(startOfMonth, endOfMonth, 0).collect { amount ->
+                    dao.getSMSMonthlySum(startOfMonth, endOfMonth, 0,0).collect { amount ->
                         val safeAmount = amount ?: 0.0
                         detail_total_amount.text = "₹"+safeAmount.toString()
                     }
@@ -128,12 +128,12 @@ class LogActivity: AppCompatActivity() {
                 list_header.setText("Credits Today")
                 detail_total_amount.setTextColor(Color.parseColor("#01E901"))
                 launch {
-                    dao.getTransactionsByDateandtype(today, 1).collect { fullList ->
+                    dao.getSMSTransactionsByDateandtype(today, 1,0).collect { fullList ->
                         adapter.updateData(fullList)
                     }
                 }
                 launch {
-                    dao.getDailySum(today, 1).collect { amount ->
+                    dao.getSMSDailySum(today, 1,0).collect { amount ->
                         val safeAmount = amount ?: 0.0
                         detail_total_amount.text = "₹"+safeAmount.toString()
                     }
@@ -145,12 +145,12 @@ class LogActivity: AppCompatActivity() {
                 list_header.setText("This Months's Credit")
                 detail_total_amount.setTextColor(Color.parseColor("#01E901"))
                 launch {
-                    dao.getMonthlydata(startOfMonth, endOfMonth, 1).collect { fullList ->
+                    dao.getSMSMonthlydata(startOfMonth, endOfMonth, 1,0).collect { fullList ->
                         adapter.updateData(fullList)
                     }
                 }
                 launch {
-                    dao.getMonthlySum(startOfMonth, endOfMonth, 1).collect { amount ->
+                    dao.getSMSMonthlySum(startOfMonth, endOfMonth, 1,0).collect { amount ->
                         val safeAmount = amount ?: 0.0
                         detail_total_amount.text = "₹"+safeAmount.toString()
                     }

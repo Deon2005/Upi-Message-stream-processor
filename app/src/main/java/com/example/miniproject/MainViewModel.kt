@@ -21,10 +21,13 @@ class MainViewModel (application: Application): AndroidViewModel(application)
     private val startOfMonth = today.withDayOfMonth(1)
     private val endOfMonth = today.withDayOfMonth(today.lengthOfMonth())
 
-    val todayDebit: StateFlow<Double> = dao.getDailySum(today,0).stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000),0.0)
-    val monthDebit: StateFlow<Double> = dao.getMonthlySum(startOfMonth, endOfMonth, 0).stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
-    val todayCredit: StateFlow<Double> = dao.getDailySum(today, 1).stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
-    val monthCredit: StateFlow<Double> = dao.getMonthlySum(startOfMonth, endOfMonth, 1).stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
+    val expensetoday: StateFlow<Double> = dao.getDailySum(today, 0).stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
+
+    val expensemonth: StateFlow<Double> = dao.getMonthlySum(startOfMonth, endOfMonth, 0).stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
+    val todayDebit: StateFlow<Double> = dao.getSMSDailySum(today,0,0).stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000),0.0)
+    val monthDebit: StateFlow<Double> = dao.getSMSMonthlySum(startOfMonth, endOfMonth, 0,0).stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
+    val todayCredit: StateFlow<Double> = dao.getSMSDailySum(today, 1,0).stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
+    val monthCredit: StateFlow<Double> = dao.getSMSMonthlySum(startOfMonth, endOfMonth, 1,0).stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
 
     //Code for the line graph
     private val chart_Data= MutableStateFlow<List<Pair<Float,Float>>>(emptyList())
@@ -89,8 +92,7 @@ class MainViewModel (application: Application): AndroidViewModel(application)
             while (!currentDate.isAfter(endDate)) {
                 val totalForDay = dataMap[currentDate] ?: 0.0
 
-                // If it's a Week view, X axis is the Day of Week (1 to 7)
-                // If it's a Month view, X axis is the Day of Month (1 to 31)
+
                 val xValue = if (index == 0 || index == 2) {
                     currentDate.dayOfWeek.value.toFloat()
                 } else {
@@ -100,20 +102,9 @@ class MainViewModel (application: Application): AndroidViewModel(application)
                 val yValue = totalForDay.toFloat()
                 newChartData.add(Pair(xValue, yValue))
 
-                // Move to the very next day for the next loop iteration
                 currentDate = currentDate.plusDays(1)
             }
-        /*for(item in rawData)
-        {
-            val xValue = if (_currentOptionIndex.value == 0 || _currentOptionIndex.value == 2) {
-                item.date.dayOfWeek.value.toFloat()
-            } else {
-                item.date.dayOfMonth.toFloat()
-            }
 
-            val yValue = item.total.toFloat()
-            newChartData.add(Pair(xValue, yValue))
-        }*/
             chart_Data.value=newChartData
         }}
     }

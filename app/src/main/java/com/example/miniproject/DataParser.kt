@@ -47,7 +47,8 @@ class DataParser {
                     date = date,
                     type = typecode,
                     upiID = upiString,
-                    accountNumber = accNoString
+                    accountNumber = accNoString,
+                    mode=0
                 )
 
                 database.transactionDao().insertTransaction(newTransaction)
