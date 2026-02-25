@@ -7,6 +7,7 @@ import com.google.ai.client.generativeai.GenerativeModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import com.example.miniproject.BuildConfig
 
 data class GeminiResult(val pattern: String, val extractedWord: String)
 
@@ -14,7 +15,7 @@ class GeminiHelper(private val context: Context) {
 
     private val generativeModel = GenerativeModel(
         modelName = "gemini-2.5-flash",
-        apiKey = "AIzaSyC2LGIq-N3U-fb8aUXHW_y3BCPUP2xYZW4"
+        apiKey = BuildConfig.GEMINI_API_KEY
     )
 
     suspend fun generateRegexFromSms(sms: String): GeminiResult? {

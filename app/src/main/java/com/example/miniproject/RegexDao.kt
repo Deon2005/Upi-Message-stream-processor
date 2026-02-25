@@ -16,7 +16,11 @@ interface RegexDao
     @Query("SELECT COUNT(*) FROM regexdatabase")
     suspend fun getCount(): Int
 
-    @Query("SELECT * FROM regexdatabase WHERE :sender LIKE '%' || name || '%' LIMIT 1")
+    @Query("""
+    SELECT * FROM regexdatabase 
+    WHERE :sender LIKE '%' || name || '%' 
+    OR name LIKE '%' || :sender || '%'
+""")
     suspend fun getRegexBySender(sender: String): List<Regexdatabase>
 
     @Delete
