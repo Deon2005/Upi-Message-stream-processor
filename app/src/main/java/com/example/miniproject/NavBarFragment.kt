@@ -33,7 +33,7 @@ class NavBarFragment : Fragment() {
         }
 
         navSettingsBtn.setOnClickListener {
-            //swapScreen(SettingsFragment())
+            swapScreen(SettingsFragment())
         }
 
         // 3. Keep your FAB working

@@ -70,5 +70,8 @@ interface TransactionDao
     // 4. Query filtered by BOTH (Your original logic)
     @Query("SELECT * FROM transactions WHERE type = :type AND mode = :mode AND date >= :startDate AND date <= :endDate ORDER BY date DESC")
     fun getHistoryFullFilter(type: Int, mode: Int, startDate: LocalDate, endDate: LocalDate): Flow<List<Transaction>>
+
+    @Query("DELETE FROM transactions WHERE date < :cutoffDate")
+    suspend fun deleteOlderThan(cutoffDate: LocalDate)
 }
 

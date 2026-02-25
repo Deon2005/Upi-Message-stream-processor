@@ -28,36 +28,46 @@ class SmsReciever : BroadcastReceiver() {
             }
         }
     }
-    private suspend fun handleSms(context: Context,intent: Intent)
-    {
-        val bundle=intent.extras
-        val pdus=bundle?.get("pdus") as Array<*> ?: return
+    private suspend fun handleSms(context: Context, intent: Intent) {
+        val bundle = intent.extras
+        val pdus = bundle?.get("pdus") as Array<*> ?: return
 
-        for(pdu in pdus)
-        {
-            val format=bundle.getString("format")
-            val smsMessage=android.telephony.SmsMessage.createFromPdu(pdu as ByteArray,format)
+        for (pdu in pdus) {
+            val format = bundle.getString("format")
+            val smsMessage = android.telephony.SmsMessage.createFromPdu(pdu as ByteArray, format)
 
-            val sender=smsMessage.displayOriginatingAddress
-            val message=smsMessage.displayMessageBody
-            Log.d("SMS_TEST","$sender: $message")
-            val parser=DataParser()
-            val database=AppDatabase.getDatabase(context)
-            val rule=database.regexDao().getRegexBySender(sender)
-            if(rule!=null)
-            {
-                val regex= rule.regex
-                Log.d("PARSER_SUCCESS", "Regex: $regex")
-                val success = parser.smsParser( context,message, rule)
-                if (success) {
-                    Log.d("PARSER_SUCCESS", "Success")
-                } else {
-                    Log.d("PARSER_SUCCESS", "Failed")
+            val sender = smsMessage.displayOriginatingAddress
+            val message = smsMessage.displayMessageBody
+            Log.d("SMS_TEST", "$sender: $message")
+
+            val parser = DataParser()
+            val database = AppDatabase.getDatabase(context)
+
+            // 1. Get ALL matching rules (List instead of single object)
+            val rulesList = database.regexDao().getRegexBySender(sender)
+
+            if (rulesList.isNotEmpty()) {
+                var isParsed = false
+
+                // 2. Loop through rules until one works
+                for (rule in rulesList) {
+                    Log.d("PARSER_ATTEMPT", "Trying rule: ${rule.name}")
+
+                    // Try to parse using this rule
+                    val success = parser.smsParser(context, message, rule)
+
+                    if (success) {
+                        Log.d("PARSER_SUCCESS", "Success with rule: ${rule.regex}")
+                        isParsed = true
+                        break // Stop checking other rules for this SMS
+                    }
                 }
-            }
-            else
-            {
-                Log.d("PARSER_SUCCESS", "No Regex Found")
+
+                if (!isParsed) {
+                    Log.d("PARSER_FAIL", "Matched sender but no rules worked for this message format.")
+                }
+            } else {
+                Log.d("PARSER_FAIL", "No Regex Found for sender: $sender")
             }
         }
     }

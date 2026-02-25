@@ -54,6 +54,7 @@ dependencies {
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
     val roomversion = "2.6.1"
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
     implementation("androidx.room:room-runtime:$roomversion")
     implementation("androidx.room:room-ktx:$roomversion")
     ksp("androidx.room:room-compiler:$roomversion")
