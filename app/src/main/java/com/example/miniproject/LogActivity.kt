@@ -1,17 +1,22 @@
 package com.example.miniproject
 
+import android.R.attr.duration
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import kotlin.collections.emptyList
+import android.view.Window
+import com.google.android.material.transition.platform.MaterialContainerTransform
 
 class LogActivity: AppCompatActivity() {
     private lateinit var adapter: TransactionAdapter
@@ -21,15 +26,28 @@ class LogActivity: AppCompatActivity() {
     val dao=AppDatabase.getDatabase(this).transactionDao()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
+        setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
+
+        window.sharedElementEnterTransition = MaterialContainerTransform().apply{
+            addTarget(android.R.id.content)
+            duration = 1000L
+        }
+        window.sharedElementReturnTransition = MaterialContainerTransform().apply {
+            addTarget(android.R.id.content)
+            duration = 600L
+        }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.logdata)
-        val logType =intent.getStringExtra("type")
-        Log.d("LogActivity", "Log type: $logType")
+
         val btn_back = findViewById<ImageButton>(R.id.btn_back)
         btn_back.setOnClickListener {
-            finish()
+            supportFinishAfterTransition()
         }
-
+        val incomingTransitionName=intent.getStringExtra("transitionName")
+        findViewById<View>(android.R.id.content).transitionName = incomingTransitionName
+        val logType =intent.getStringExtra("type")
+        Log.d("LogActivity", "Log type: $logType")
         val detail_total_amount=findViewById<TextView>(R.id.detail_total_amount)
         val detail_title=findViewById<TextView>(R.id.detail_title)
         val list_header=findViewById<TextView>(R.id.list_header)

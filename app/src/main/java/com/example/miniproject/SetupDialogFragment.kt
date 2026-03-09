@@ -15,13 +15,15 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
 import kotlinx.coroutines.launch
+import android.app.AlertDialog
 
 class SetupDialogFragment : DialogFragment() {
 
     private var submitbtn: MaterialButton? = null
     private var senderid: EditText? = null
     private var samplesms: EditText? = null
-    private var typeValue = 0 // Default: Debit (radio0)
+    private var typeValue = 0
+    private var loadingDialog: AlertDialog? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -80,6 +82,7 @@ class SetupDialogFragment : DialogFragment() {
     }
 
     fun onRegexGenerated(regex: String, type: String) {
+        loadingDialog?.dismiss()
         val name = senderid?.text.toString()
         lifecycleScope.launch {
             val database = AppDatabase.getDatabase(requireContext())
@@ -96,6 +99,11 @@ class SetupDialogFragment : DialogFragment() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        loadingDialog?.dismiss()
+        loadingDialog = null
+    }
     override fun onStart() {
         super.onStart()
         dialog?.window?.setLayout(
@@ -109,9 +117,19 @@ class SetupDialogFragment : DialogFragment() {
             isEnabled = false
             text = "Generating..."
         }
+        if (loadingDialog == null) {
+            val dialogView = layoutInflater.inflate(R.layout.loading, null)
+            loadingDialog = AlertDialog.Builder(requireContext())
+                .setView(dialogView)
+                .setCancelable(false) // Prevents closing by tapping outside
+                .create()
+            loadingDialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        }
+        loadingDialog?.show()
     }
 
     fun onError() {
+        loadingDialog?.dismiss()
         submitbtn?.apply {
             isEnabled = true
             text = "Try Again"

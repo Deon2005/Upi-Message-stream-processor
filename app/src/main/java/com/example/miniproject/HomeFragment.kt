@@ -14,6 +14,7 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import kotlinx.coroutines.launch
+import androidx.core.app.ActivityOptionsCompat
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
@@ -62,18 +63,26 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         chartleft.setOnClickListener { chartOption.text = viewModel.previousChart() }
         chartright.setOnClickListener { chartOption.text = viewModel.nextChart() }
 
-        expensetoday.setOnClickListener { showlog("expensetoday") }
-        expensemonth.setOnClickListener { showlog("expensemonth") }
-        debittoday.setOnClickListener { showlog("debittoday") }
-        debitmonth.setOnClickListener { showlog("debitmonth") }
-        credittoday.setOnClickListener { showlog("credittoday") }
-        creditmonth.setOnClickListener { showlog("creditmonth") }
+        expensetoday.setOnClickListener { showlog("expensetoday",it) }
+        expensemonth.setOnClickListener { showlog("expensemonth",it) }
+        debittoday.setOnClickListener { showlog("debittoday",it) }
+        debitmonth.setOnClickListener { showlog("debitmonth", it) }
+        credittoday.setOnClickListener { showlog("credittoday", it) }
+        creditmonth.setOnClickListener { showlog("creditmonth", it) }
     }
 
-    private fun showlog(type: String) {
+    private fun showlog(type: String,clickedView: View) {
         val intent = Intent(requireContext(), LogActivity::class.java)
         intent.putExtra("type", type)
-        startActivity(intent)
+        val uniqueName ="zoomin_${clickedView.id}"
+        clickedView.transitionName=uniqueName
+        intent.putExtra("transitionName", uniqueName)
+        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+            requireActivity(),
+            clickedView,
+            uniqueName
+        )
+        startActivity(intent,options.toBundle())
     }
 
     private fun updateChart(dataPoints: List<Pair<Float, Float>>, view: View) {

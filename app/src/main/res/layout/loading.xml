@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_margin="20dp"
+    android:layout_height="wrap_content"
+    android:paddingVertical="30dp"
+    android:layout_gravity="center"
+    app:cardBackgroundColor="@color/blockcolor"
+    app:cardCornerRadius="28dp"
+    app:cardElevation="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingTop="40dp"
+        android:paddingBottom="32dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animation_view"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            app:lottie_rawRes="@raw/loadingvideo"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:fontFamily="serif"
+            android:text="Generating.."
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="Crafting and testing the perfect regex for this transaction format."
+            android:textColor="#A0A0A0"
+            android:textSize="14sp"
+            android:lineSpacingExtra="4dp" />
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

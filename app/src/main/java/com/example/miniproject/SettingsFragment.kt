@@ -2,6 +2,8 @@ package com.example.miniproject
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -36,7 +38,16 @@ class SettingsFragment : Fragment() {
         // 2. Setup Auto-Delete Switch
         val switchAutoDelete = view.findViewById<SwitchMaterial>(R.id.switchAutoDelete)
 
-        // Load saved state (Shared Preferences)
+        val states = arrayOf(
+            intArrayOf(android.R.attr.state_checked),  // State when ON
+            intArrayOf(-android.R.attr.state_checked)  // State when OFF (the minus sign means "not")
+        )
+        val colors = intArrayOf(
+            Color.parseColor("#1F6FEB"), // Color when ON (e.g., your app's blue accent)
+            Color.parseColor("#424242")  // Color when OFF (e.g., dark gray)
+        )
+        val colorStateList = ColorStateList(states, colors)
+        switchAutoDelete.trackTintList = colorStateList
         val sharedPref = requireActivity().getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
         val isAutoDeleteEnabled = sharedPref.getBoolean("auto_delete_90", false)
         switchAutoDelete.isChecked = isAutoDeleteEnabled
