@@ -1,6 +1,7 @@
 package com.example.miniproject
 
 import android.app.DatePickerDialog
+import android.content.DialogInterface
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -8,6 +9,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.OvershootInterpolator
 import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
@@ -146,5 +150,36 @@ class TransactionDialogFragment : DialogFragment() {
             fragment.arguments = bundle
             return fragment
         }
+    }
+    override fun onStart()
+    {
+        super.onStart()
+        dialog?.window?.setLayout(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
+        dialog?.window?.attributes?.windowAnimations = R.style.DepthDialogAnimation
+
+        val rootView=requireActivity().findViewById<View>(android.R.id.content)
+        rootView.animate()
+            .scaleX(0.95f)
+            .scaleY(0.95f)
+            .alpha(0.7f)
+            .setDuration(350)
+            .setInterpolator(DecelerateInterpolator())
+            .start()
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+
+        val rootView = activity?.findViewById<View>(android.R.id.content)
+        rootView?.animate()
+            ?.scaleX(1f)
+            ?.scaleY(1f)
+            ?.alpha(1f)
+            ?.setDuration(300)
+            ?.setInterpolator(OvershootInterpolator(1.0f))
+            ?.start()
     }
 }

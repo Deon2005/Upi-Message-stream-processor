@@ -4,6 +4,10 @@
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
+    <style name="DepthDialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/dialog_depth_in</item>
+        <item name="android:windowExitAnimation">@anim/dialog_depth_out</item>
+    </style>
 
     <style name="Theme.Miniproject" parent="Base.Theme.Miniproject" />
 </resources>

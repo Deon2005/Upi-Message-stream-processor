@@ -18,7 +18,7 @@ interface RegexDao
 
     @Query("""
     SELECT * FROM regexdatabase 
-    WHERE :sender LIKE '%' || name || '%' 
+    WHERE TRIM(:sender) LIKE '%' || TRIM(name) || '%' 
     OR name LIKE '%' || :sender || '%'
 """)
     suspend fun getRegexBySender(sender: String): List<Regexdatabase>
